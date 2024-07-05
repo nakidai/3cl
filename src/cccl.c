@@ -1,13 +1,13 @@
 #include "cccl.h"
 #include "types.h"
 
+#include <cvector/cvector.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "cvector.h"
 #include "platform/getch.h"
 #include "utils.h"
 
