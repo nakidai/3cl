@@ -21,7 +21,7 @@ typedef struct cccl_procpair
 typedef struct cccl_pointer
 {
     i32  value;
-    bool is_loop;
+    i32 meta;
 } cccl_pointer;
 
 typedef struct cccl
@@ -42,7 +42,5 @@ void cccl_init(s8 *filename);
 void cccl_read(void);
 void cccl_run(void);
 void cccl_free(void);
-
-i32 cccl_readnext(void);
 
 #endif /* __CCCL_H__ */

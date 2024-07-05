@@ -184,7 +184,7 @@ void cccl_run(void)
                 if ((var = require_variable_local(operand)) == -1)
                 {
                     if ((var = require_variable(operand)) == -1)
-                        die(1, "no %c variable found (for %% at %d)", operand, start);
+                        die(1, "no %c variable found (%% at %d)", operand, start);
                     else
                         size = pc.lv_stack[cvector_size(pc.lv_stack) - 1][var].value;
                 } else
@@ -193,7 +193,7 @@ void cccl_run(void)
                 }
             }
             if (size < 1)
-                die(1, "invalid argument %d, should be not less than 1 (for %% at %d)", size, start);
+                die(1, "invalid argument %d, should be not less than 1 (%% at %d)", size, start);
             require_stack_size(size, start);
             cvector_init(to_reverse, size, NULL);
             for (int i = 0; i < size; ++i)
@@ -225,7 +225,7 @@ void cccl_run(void)
             operand = read_operand(false);
             if ((var = require_variable_local(operand)) == -1)
                 if ((var = require_variable(operand)) == -1)
-                    die(1, "no %c variable found (for ! at %d)", operand, start);
+                    die(1, "no %c variable found (! at %d)", operand, start);
                 else
                     cvector_erase(pc.variables, var);
             else
@@ -236,7 +236,7 @@ void cccl_run(void)
             i16 value;
             if ((var = require_variable_local(operand)) == -1)
                 if ((var = require_variable(operand)) == -1)
-                    die(1, "no %c variable found (for ! at %d)", operand, start);
+                    die(1, "no %c variable found ($ at %d)", operand, start);
                 else
                     value = pc.variables[var].value;
             else
@@ -255,7 +255,7 @@ void cccl_run(void)
             operand = read_operand(false);
             if ((var = require_variable_local(operand)) == -1)
                 if ((var = require_variable(operand)) == -1)
-                    die(1, "no %c variable found (for < at %d)", operand, start);
+                    die(1, "no %c variable found (< at %d)", operand, start);
                 else
                     printf("%c", pc.variables[var].value);
             else
@@ -266,7 +266,7 @@ void cccl_run(void)
             i16 *to_store;
             if ((var = require_variable_local(operand)) == -1)
                 if ((var = require_variable(operand)) == -1)
-                    die(1, "no %c variable found (for > at %d)", operand, start);
+                    die(1, "no %c variable found (> at %d)", operand, start);
                 else
                     to_store = &pc.variables[var].value;
             else
@@ -276,20 +276,35 @@ void cccl_run(void)
         case '@':
             operand = read_operand(false);
             if ((var = require_procedure(operand)) == -1)
-                die(1, "no %c procedure found (for @ at %d)", operand, start);
-            pointer = (cccl_pointer){.value=pc.ep, .is_loop=false};
+                die(1, "no %c procedure found (@ at %d)", operand, start);
+            pointer = (cccl_pointer){.value=pc.ep, .meta=0};
             cvector_push_back(pc.ep_stack, pointer);
             pc.ep = pc.procedures[var].value;
             break;
         case '#':
             if (cvector_size(pc.lv_stack) == 0)
-            {
                 exit(0);
-            }
             pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 1].value;
-            if (pc.ep_stack[cvector_size(pc.ep_stack) - 1].is_loop)
+            if (pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta != -1)
                 cvector_pop_back(pc.ep_stack);
             cvector_pop_back(pc.ep_stack);
+            break;
+        case ':':
+            if (pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta == -1)
+            {
+                die(1, "not in a loop (: at %d)", start);
+            } else if (pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta == 0)
+            {
+                pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 1].value;
+                cvector_pop_back(pc.ep_stack);
+                cvector_pop_back(pc.ep_stack);
+            } else
+            {
+                if (pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta > 0)
+                    --pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta;
+                pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 2].value;
+            }
+            pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 2].value;
             break;
         }
     }
