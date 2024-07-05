@@ -7,8 +7,10 @@ endif()
 
 add_executable(
     "${PROJECT_NAME}"
+    src/cccl.c
     src/main.c
     src/utils.c
+    src/platform/getch.c
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")

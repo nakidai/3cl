@@ -5,8 +5,6 @@
 
 #include <stdbool.h>
 
-#include "cvector.h"
-
 
 typedef struct cccl_varpair
 {
@@ -28,15 +26,16 @@ typedef struct cccl_pointer
 
 typedef struct cccl
 {
-    cccl_varpair   *variables;  /* Array with variables      */
-    cccl_procpair  *procedures; /* Array with procedures     */
-    i16            *stack;      /* User stack                */
-    s8             *br_stack;   /* Stack for brackets        */
-    i32            *ep_stack;   /* Call stack                */
-    i32             ep;         /* Pointer to current symbol */
-    s8             *code;       /* Code being executed       */
-    s8             *filename;   /* File being executed       */
-    i32             size;       /* File size                 */
+    cccl_varpair    *variables;  /* Array with variables      */
+    cccl_procpair   *procedures; /* Array with procedures     */
+    i16             *stack;      /* User stack                */
+    s8              *br_stack;   /* Stack for brackets        */
+    cccl_varpair   **lv_stack;   /* Local variable stack      */
+    cccl_pointer    *ep_stack;   /* Call stack                */
+    i32              ep;         /* Pointer to current symbol */
+    s8              *code;       /* Code being executed       */
+    s8              *filename;   /* File being executed       */
+    i32              size;       /* File size                 */
 } cccl;
 
 void cccl_init(s8 *filename);

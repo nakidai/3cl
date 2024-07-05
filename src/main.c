@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 
+#include "cccl.h"
+#include "platform/getch.h"
+
 
 const s8 *program_name;
 
@@ -35,6 +38,7 @@ noreturn void usage(bool full)
 int main(i32 argc, s8 **argv)
 {
     program_name = argv[0];
+    getch_init();
 
     i32 ch;
     while ((ch = getopt_long(argc, argv, "h", long_options, NULL)) != EOF)
@@ -51,6 +55,11 @@ int main(i32 argc, s8 **argv)
     }
     if (argv[optind] == NULL)
         usage(false);
+
+    cccl_init(argv[optind]);
+        cccl_read();
+        cccl_run();
+    cccl_free();
 
     return 0;
 }
