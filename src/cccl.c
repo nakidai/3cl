@@ -13,10 +13,12 @@
 
 
 static cccl pc = {0};
-static const s8 *const name_allowed  = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static const s8 *const name_allowed_ = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-static const s8 *const all_allowed   = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_{}[]()?;@=!&$%<>^+-*~#:/ \n\t";
-static const s8 *const skippable     = " \t\n";
+static const s8 *const name_allowed   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static const s8 *const name_allowed_  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+static const s8 *const all_allowed    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_{}[]()?;@=!&$%<>^+-*~#:/ \n\t";
+static const s8 *const skippable      = " \t\n";
+static const s8 *const open_brackets  = "[({?";
+static const s8 *const close_brackets = "])};";
 
 static void cccl_varpair_free(void *p)
 {
@@ -113,6 +115,30 @@ static i32 require_procedure(s8 name)
     return -1;
 }
 
+static i32 find_bracket(i32 start)
+{
+    i32 start_length = cvector_size(pc.br_stack);
+    cccl_brpair brpair;
+    for (i32 pointer = pc.ep+1; pointer < pc.size; ++pointer)
+    {
+        check_symbol();
+        if (strchr(skippable, pc.code[pointer])) continue;
+        else if (strchr(open_brackets, pc.code[pointer]))
+        {
+            brpair = (cccl_brpair){.pointer=pointer, .bracket=close_brackets[strchr(open_brackets, pc.code[pointer]) - open_brackets]};
+            cvector_push_back(pc.br_stack, brpair);
+        }
+        else if (strchr(close_brackets, pc.code[pointer]))
+        {
+            if (pc.code[pointer] != pc.br_stack[cvector_size(pc.br_stack) - 1].bracket)
+                die(1, "invalid bracket (%c at %d for %c at %d)", pc.code[pointer], pointer, pc.code[pc.br_stack[cvector_size(pc.br_stack) - 1].pointer], pc.br_stack[cvector_size(pc.br_stack) - 1].pointer);
+            cvector_pop_back(pc.br_stack);
+        }
+        if (cvector_size(pc.br_stack) < start_length) return pointer;
+    }
+    die(1, "unclosed bracket (%c at %d)", pc.code[start], start);
+}
+
 static s8 read_operand(bool allow_underscore)
 {
     i32 start = pc.ep;
@@ -129,9 +155,10 @@ static s8 read_operand(bool allow_underscore)
 
 void cccl_run(void)
 {
-    i32 variable, start, var;
+    i32 variable, start, var, bracket;
     cccl_varpair varpair;
     cccl_pointer pointer;
+    cccl_brpair  brpair;
     s8 operand;
     bool is_comment;
     for (pc.ep = 0; pc.ep < pc.size; ++pc.ep)
@@ -146,6 +173,7 @@ void cccl_run(void)
         {
         case ' ':
         case '\t':
+        case ';':
             break;
         case '/':
             is_comment = true;
@@ -304,7 +332,51 @@ void cccl_run(void)
                     --pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta;
                 pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 2].value;
             }
+            break;
+        case '}':
+            pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 1].value;
+            cvector_pop_back(pc.ep_stack);
+            break;
+        case ')':
             pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 2].value;
+            break;
+        case ']':
+            if (pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta == 0)
+            {
+                pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 1].value;
+                cvector_pop_back(pc.ep_stack);
+                cvector_pop_back(pc.ep_stack);
+            } else
+            {
+                --pc.ep_stack[cvector_size(pc.ep_stack) - 1].meta;
+                pc.ep = pc.ep_stack[cvector_size(pc.ep_stack) - 2].value;
+            }
+            break;
+        case '(':
+            pointer = (cccl_pointer){.value=start, .meta=-2};
+            brpair = (cccl_brpair){.pointer=start, .bracket=')'};
+            cvector_push_back(pc.br_stack, brpair);
+            bracket = find_bracket(start);
+            cvector_push_back(pc.ep_stack, pointer);
+            pointer.value = bracket;
+            cvector_push_back(pc.ep_stack, pointer);
+            break;
+        case '?':
+            operand = read_operand(false);
+            if ((var = require_variable_local(operand)) == -1)
+                if ((var = require_variable(operand)) == -1)
+                    die(1, "no %c variable found (? at %d)", operand, start);
+                else
+                    var = pc.variables[var].value;
+            else
+                var = pc.lv_stack[cvector_size(pc.lv_stack) - 1][var].value;
+            if (var != pc.stack[cvector_size(pc.stack) - 1])
+            {
+                brpair = (cccl_brpair){.pointer=start, .bracket='?'};
+                cvector_push_back(pc.br_stack, brpair);
+                bracket = find_bracket(start);
+                pc.ep = bracket;
+            }
             break;
         }
     }
@@ -314,4 +386,7 @@ void cccl_run(void)
     printf("Variables:\n");
     for (int i = 0; i < cvector_size(pc.variables); ++i)
         printf("%c:%d\n", pc.variables[i].name, pc.variables[i].value);
+    printf("Call stack:\n");
+    for (int i = 0; i < cvector_size(pc.ep_stack); ++i)
+        printf("%d(%d)", pc.ep_stack[i].value, pc.ep_stack[i].meta);
 }

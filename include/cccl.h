@@ -21,15 +21,21 @@ typedef struct cccl_procpair
 typedef struct cccl_pointer
 {
     i32  value;
-    i32 meta;
+    i32  meta;
 } cccl_pointer;
+
+typedef struct cccl_brpair
+{
+    i32 pointer;
+    s8  bracket;
+} cccl_brpair;
 
 typedef struct cccl
 {
     cccl_varpair    *variables;  /* Array with variables      */
     cccl_procpair   *procedures; /* Array with procedures     */
     i16             *stack;      /* User stack                */
-    s8              *br_stack;   /* Stack for brackets        */
+    cccl_brpair     *br_stack;   /* Stack for brackets        */
     cccl_varpair   **lv_stack;   /* Local variable stack      */
     cccl_pointer    *ep_stack;   /* Call stack                */
     i32              ep;         /* Pointer to current symbol */
