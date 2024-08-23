@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "operation.h"
 #include "platform/getch.h"
 #include "utils.h"
 
@@ -37,6 +38,7 @@ void cccl_init(s8 *filename)
     if (errno) die(1, strerror(errno));
 
     pc.filename = filename;
+    cccl_operation_init(&pc);
 }
 
 void cccl_free()
