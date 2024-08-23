@@ -1,6 +1,3 @@
-#include "utils.h"
-#include "types.h"
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +6,7 @@
 #include "main.h"
 
 
-noreturn void die(i32 code, s8 *fmt, ...)
+noreturn void die(int code, char *fmt, ...)
 {
     va_list args;
 

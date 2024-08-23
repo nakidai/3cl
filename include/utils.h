@@ -3,9 +3,6 @@
 
 #include <stdnoreturn.h>
 
-#include "types.h"
-
-
-noreturn void die(i32 code, s8 *fmt, ...);
+noreturn void die(int code, char *fmt, ...);
 
 #endif /* __UTILS_H__ */

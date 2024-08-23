@@ -24,7 +24,3 @@ directory
 
 Also I think you can use some wrapper of the cmake with gui (or iirc cmake has
 its own gui app)
-
-Dependencies
---
-- [cvector](https://github.com/eteran/c-vector) (header only, so included in the source)

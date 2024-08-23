@@ -1,5 +1,4 @@
 #include "main.h"
-#include "types.h"
 
 #include <getopt.h>
 #include <stdbool.h>
@@ -7,15 +6,16 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 
-#include "cccl.h"
 #include "platform/getch.h"
+#include "3cl.h"
+#include "readfile.h"
 
 
-const s8 *program_name;
+const char *program_name;
 
-static const s8 *const usage_message =
+static const char *const usage_message =
     "usage: %s [-h] file\n";
-static const s8 *const usage_description =
+static const char *const usage_description =
     "ccl language interpreter\n"
     "Arguments:\n"
     "  file         file to execute\n"
@@ -35,12 +35,12 @@ noreturn void usage(bool full)
     exit(full ? 0 : 1);
 }
 
-int main(i32 argc, s8 **argv)
+int main(int argc, char **argv)
 {
     program_name = argv[0];
     getch_init();
 
-    i32 ch;
+    int ch;
     while ((ch = getopt_long(argc, argv, "h", long_options, NULL)) != EOF)
     {
         switch (ch)
@@ -56,10 +56,9 @@ int main(i32 argc, s8 **argv)
     if (argv[optind] == NULL)
         usage(false);
 
-    cccl_init(argv[optind]);
-        cccl_read();
-        cccl_run();
-    cccl_free();
-
-    return 0;
+    char *code = readfile(argv[optind]);
+    struct CCL ccl;
+    ccl_init(&ccl, code, getch, (void(*)(int))putchar);
+    free(code);
+    ccl_free(&ccl);
 }
