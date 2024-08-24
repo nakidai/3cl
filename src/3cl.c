@@ -1,6 +1,7 @@
 #include "3cl.h"
 
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +13,7 @@ int ccl_init(struct CCL *ccl, const char *code, int (*in)(), void (*out)(int))
     *ccl = (struct CCL)
     {
         .code = code,
+        .stopped = false,
         .in = in,
         .out = out,
         .rootframe = (struct CCLFrame)
@@ -69,6 +71,10 @@ void ccl_exec(struct CCL *ccl)
 {
     struct CCLFrame *curframe = &ccl->rootframe;
 
-    for (;;++curframe->ep)
+    for (;;)
+    {
         curframe = ccl_instruction(ccl, curframe);
+        if (ccl->stopped)
+            break;
+    }
 }

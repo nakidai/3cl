@@ -13,11 +13,16 @@ add_executable(
     src/instruction/pushzero.c
     src/instruction/increment.c
     src/instruction/decrement.c
+    src/instruction/add.c
+    src/instruction/subtract.c
+    src/instruction/reverse.c
     src/main.c
     src/platform/getch.c
+    src/readchar.c
     src/readfile.c
     src/stack.c
     src/utils.c
+    src/variable.c
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")

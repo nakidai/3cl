@@ -1,6 +1,7 @@
 #ifndef __3CL_H__
 #define __3CL_H__
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -85,6 +86,7 @@ struct CCL
     struct CCLStack   stack;
     struct CCLFrame   rootframe;
     const char       *code;
+    bool              stopped;
     int             (*in)();
     void            (*out)(int);
 };
