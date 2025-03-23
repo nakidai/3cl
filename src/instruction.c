@@ -2,6 +2,7 @@
 #include "instructions.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "readchar.h"
 #include "3cl.h"
@@ -30,7 +31,10 @@ struct CCLFrame *ccl_instruction(struct CCL *ccl, struct CCLFrame *frame)
     case '*' : ISSW(add);
     case '~' : ISSW(subtract);
     case '%' : ISSW(reverse);
+    case '=' : ISSW(assign);
+    default  : ISSW(invalid);
     }
 #undef INSW
     return instruction(ccl, frame);
+    puts("aboba");
 }

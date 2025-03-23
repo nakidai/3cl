@@ -30,3 +30,29 @@ struct CCLVariable *ccl_variable_getany(struct CCL *ccl, struct CCLFrame *frame,
 
     return NULL;
 }
+
+struct CCLVariable *ccl_variable_set(struct CCLVariable *vars, char name, CCLNum value)
+{
+    struct CCLVariable *toset;
+    struct CCLVariable var = (struct CCLVariable)
+    {
+        .next = NULL,
+        .name = name,
+        .value = value,
+    };
+
+    if (vars->name == '_')
+    {
+        toset = vars;
+        var.prev = NULL;
+    } else
+    {
+        for (toset = vars; toset->next != NULL; toset = toset->next);
+        toset->next = (struct CCLVariable *)malloc(sizeof(*toset->next));
+        var.prev = toset;
+        toset = toset->next;
+    }
+
+    *toset = var;
+    return toset;
+}

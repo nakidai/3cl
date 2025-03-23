@@ -16,6 +16,8 @@ add_executable(
     src/instruction/add.c
     src/instruction/subtract.c
     src/instruction/reverse.c
+    src/instruction/assign.c
+    src/instruction/invalid.c
     src/main.c
     src/platform/getch.c
     src/readchar.c

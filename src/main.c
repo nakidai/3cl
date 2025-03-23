@@ -59,6 +59,8 @@ int main(int argc, char **argv)
     char *code = readfile(argv[optind]);
     struct CCL ccl;
     ccl_init(&ccl, code, getch, (void(*)(int))putchar);
+    ccl_exec(&ccl);
     free(code);
     ccl_free(&ccl);
+    return 0;
 }

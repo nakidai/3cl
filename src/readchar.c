@@ -17,7 +17,7 @@ char ccl_readchar(struct CCL *ccl, struct CCLFrame *frame, enum CCLRCFlags flags
     bool iscomment;
 
     char chr;
-    for (;(chr = ccl->code[frame->ep]) != '\0'; ++frame->ep)
+    while ((chr = ccl->code[frame->ep++]) != '\0')
     {
         if (iscomment && chr == '\n')
             iscomment = false;

@@ -21,18 +21,12 @@ char *readfile(const char *name)
             if ((chr = fgetc(file)) == EOF)
             {
                 if (errno)
-                {
-                    fclose(file);
                     die(1, strerror(errno));
-                }
                 else
-                {
                     break;
-                }
             }
             code[i] = chr;
         }
-        code[size - 1] = '\0';
     fclose(file);
 
     return code;

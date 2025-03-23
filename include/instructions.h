@@ -14,6 +14,8 @@ INST(decrement);
 INST(add);
 INST(subtract);
 INST(reverse);
+INST(assign);
+INST(invalid);
 
 #undef INST
 #define INST(NAME) ccl_instruction_##NAME
