@@ -1,0 +1,13 @@
+README(7)	       Miscellaneous Information Manual		     README(7)
+
+NAME
+     3cl - c cool char lang interpreter
+
+DESCRIPTION
+     3cl is an interpreter of cool char lang which is a brainfuck-like
+     langauge, but different and with more features.
+
+SEE ALSO
+     Original implementation: https://github.com/holy-8/cool_char_lang
+
+3cl									   3cl
