@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <err.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -53,6 +54,8 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
 
     for (size_t i = 0; i < tokens_length; ++i)
     {
+        if (verbose)
+            fprintf(stderr, "T:[%c:%d] ", tokens[i].value, tokens[i].type);
         switch (tokens[i].type)
         {
         case cccl_Token_COMMAND: case cccl_Token_COMMANDWITHARG: case cccl_Token_BLOCKSTART:
@@ -82,6 +85,7 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
         case cccl_Token_COMMANDWITHARG:
         {
             assert(i + 1 != tokens_length);
+            assert(tokens[i + 1].type == cccl_Token_IDENTIFIER);
             res->in[res->in_length - 1] = malloc(sizeof(struct cccl_Node));
             *res->in[res->in_length - 1] = (struct cccl_Node)
             {
@@ -92,6 +96,7 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
         case cccl_Token_BLOCKSTART:
         {
             assert(i > 0);
+            assert(tokens[i - 1].type == cccl_Token_IDENTIFIER);
             char opening = tokens[i].value, closing;
             switch (tokens[i].value)
             {
@@ -101,10 +106,12 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
             break; case '?': closing = ';';
             }
 
-            size_t oldi = i;
+            size_t oldi = i++;
             int depth = 1;
             for (; i < tokens_length; ++i)
             {
+                if (verbose)
+                    fprintf(stderr, "S:[%c %c %d] ", tokens[i].value, closing, depth);
                 if (tokens[i].value == opening)
                     ++depth;
                 else if (tokens[i].value == closing)
@@ -116,6 +123,8 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
             errx(1, "No matching bracket for %c", opening);
 
 end:
+            putchar('\n');
+            puts("Exploring inner...");
             res->in[res->in_length - 1] = cccl_parse(
                 tokens + oldi + 1,
                 i - oldi - 1,

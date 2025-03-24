@@ -9,6 +9,8 @@ RM ?= rm -f
 
 all: 3cl
 
+${OBJS}: cccl.h
+
 3cl: ${OBJS}
 	${CC} ${LDFLAGS} -o 3cl ${OBJS} ${LDLIBS}
 

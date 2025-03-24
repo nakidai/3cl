@@ -6,6 +6,8 @@
 
 #define TOKENS_LIMIT 16384
 
+extern int verbose;
+
 struct cccl_File
 {
     char *buffer;
@@ -29,7 +31,7 @@ struct cccl_Token
 
 enum cccl_NodeType
 {
-    cccl_Node_CODE,
+    cccl_Node_CODE = 0,
 
     cccl_Node_PUSHZERO,
     cccl_Node_INCREMENT,
@@ -64,6 +66,7 @@ struct cccl_Node
 int cccl_allocfile(const char *path, struct cccl_File *file);
 
 void cccl(struct cccl_File file);
-size_t tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length);
+size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length);
+struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, enum cccl_NodeType type, char value);
 
 #endif /* __CCCL_H__ */

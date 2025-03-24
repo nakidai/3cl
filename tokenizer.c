@@ -2,10 +2,11 @@
 
 #include <assert.h>
 #include <err.h>
+#include <stdio.h>
 #include <stddef.h>
 
 
-size_t tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length)
+size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length)
 {
     size_t i = 0, tokeni = 0;
     int comment = 0;
@@ -38,11 +39,12 @@ size_t tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_
         case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': 
         case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': 
         case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+        case '_':
             X(IDENTIFIER);
-        case '^': case '+': case '-': case '*': case '~':
+        case '^': case '+': case '-': case '*': case '~': case '#': case ':':
             X(COMMAND);
-        case '%': case '=': case '!': case '$': case '&':
-        case '<': case '>': case '#': case ':': case '@':
+        case '%': case '=': case '!': case '$':
+        case '&': case '<': case '>': case '@':
             X(COMMANDWITHARG);
         case '{': case '(': case '[': case '?':
             X(BLOCKSTART);
@@ -54,7 +56,7 @@ size_t tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_
         {
             if (comment)
                 break;
-            errx(1, "Illegal symbol in a code: [%d] %c", code[i], code[i]);
+            errx(1, "Illegal symbol in a code at byte %lu: [%d] %c", i, code[i], code[i]);
         } break;
 #undef X
         }
