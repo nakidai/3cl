@@ -12,6 +12,8 @@ int verbose = 0;
 
 int main(int argc, char **argv)
 {
+    const char *name = *argv;
+
     int ch;
     while ((ch = getopt(argc, argv, "v")) >= 0)
     {
@@ -23,7 +25,7 @@ int main(int argc, char **argv)
             } break;
             default:
             {
-                fprintf(stderr, "usage: %s [-v] file\n", argv[0]);
+                fprintf(stderr, "usage: %s [-v] file\n", name);
                 exit(1);
             } break;
         }
@@ -32,7 +34,10 @@ int main(int argc, char **argv)
     argv += optind;
 
     if (!*argv)
-        return 1;
+    {
+        fprintf(stderr, "usage: %s [-v] file\n", name);
+        exit(1);
+    }
 
     struct cccl_File file;
 

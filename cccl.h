@@ -6,8 +6,6 @@
 
 #define TOKENS_LIMIT 16384
 
-extern int verbose;
-
 struct cccl_File
 {
     char *buffer;
@@ -63,10 +61,40 @@ struct cccl_Node
     char value;
 };
 
+enum cccl_ExecutorStatus
+{
+    cccl_Executr_OK = 0,
+    cccl_Executor_ERROR,
+    cccl_EXECUTOR_CONTINUE,
+    cccl_Executor_END,
+};
+
+struct cccl_Variables
+{
+    short buffer[52];
+    char used[52];
+};
+
+struct cccl_Function
+{
+    struct cccl_Node **body;
+    size_t length;
+};
+
+struct cccl_Stack
+{
+    short *buffer;
+    size_t length;
+    size_t allocated;
+};
+
+extern int verbose;
+
 int cccl_allocfile(const char *path, struct cccl_File *file);
 
 void cccl(struct cccl_File file);
 size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length);
 struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, enum cccl_NodeType type, char value);
+enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope);
 
 #endif /* __CCCL_H__ */
