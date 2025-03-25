@@ -1,0 +1,87 @@
+.Dd March 25, 2025
+.Dt 3CL
+.Os
+.
+.Sh NAME
+.Nm 3cl
+.Nd ccl language interpreter
+.
+.Sh SYNOPSIS
+.Nm
+.Op Fl vid
+.Ar file
+.
+.Sh DESCRIPTION
+Executes a
+.Ar file 
+as a
+.Xr ccl 7
+script.
+.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl v
+Show how
+.Nm
+parses tokens.
+.
+.It Fl i
+Start
+.Nm
+in an
+.Sx Interactive Mode .
+.
+.It Fl d
+Dump the stack,
+list of variables
+and functions
+after executing.
+.El
+.
+.Ss Interactive Mode
+When
+.Fl i
+is passed,
+.Nm
+runs in an
+so called
+interactive mode.
+Before execution
+of each command,
+.Nm
+runs
+.Xr getline 3
+so user can inspect
+what the program does
+step-by-step.
+Also,
+here you can run
+some commands
+to get more information
+about the execution.
+.
+.Pp
+The commands are as follows:
+.Bl -tag -width Ds
+.It Ic d
+Dump the stack,
+list of variables
+.Pq both local and global ones
+and functions.
+.El
+.
+.Sh EXAMPLES
+Run
+.Pa fib.ccl
+and dump the state
+after execution:
+.Pp
+.Dl $ ccl -d fib.ccl
+.
+.Sh SEE ALSO
+.Xr ccl 7 ,
+.Lk https://github.com/holy-8/cool_char_lang/ Original implementation
+.
+.Sh AUTHORS
+.An Nakidai Perumenei Aq Mt nakidai@disroot.org
