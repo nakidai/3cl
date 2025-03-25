@@ -269,6 +269,32 @@ Variable with a given name
 must exist.
 .El
 .
+.Sh EXAMPLES
+This procedure
+calculates nth number
+of a fibonacci sequence,
+accepting the parameter
+and returning the result
+over last cell on the stack:
+.Bd -literal -offset indent
+F {
+    / define some local variables to work with
+    &a &b &c
+
+    / if the parameter is either 0 or 1,
+    / return with it
+    c? #; $c+ = c
+    c? #;
+
+    / otherwise, get 2 previous numbers
+    / of a sequence and sum them
+    = c $c $c
+    - @F = a
+    -- @F = b
+    $a $b*
+}
+.Ed
+.
 .Sh SEE ALSO
 .Xr ascii 7 ,
 .Xr 3cl 1 ,
