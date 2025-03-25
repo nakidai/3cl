@@ -7,6 +7,24 @@ DESCRIPTION
      3cl is an interpreter of cool char lang which is a brainfuck-like
      langauge, but different and with more features.
 
+EXAMPLES
+	   F {
+	       / define some local variables to work with
+	       &a &b &c
+
+	       / if the parameter is either 0 or 1,
+	       / return with it
+	       c? #; $c+ = c
+	       c? #;
+
+	       / otherwise, get 2 previous numbers
+	       / of a sequence and sum them
+	       = c $c $c
+	       - @F = a
+	       -- @F = b
+	       $a $b*
+	   }
+
 SEE ALSO
      3cl(1), ccl(7), Original implementation:
      https://github.com/holy-8/cool_char_lang

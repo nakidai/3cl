@@ -14,6 +14,26 @@ which is a brainfuck-like langauge,
 but different
 and with more features.
 .
+.Sh EXAMPLES
+.Bd -literal -offset indent
+F {
+    / define some local variables to work with
+    &a &b &c
+
+    / if the parameter is either 0 or 1,
+    / return with it
+    c? #; $c+ = c
+    c? #;
+
+    / otherwise, get 2 previous numbers
+    / of a sequence and sum them
+    = c $c $c
+    - @F = a
+    -- @F = b
+    $a $b*
+}
+.Ed
+.
 .Sh SEE ALSO
 .Xr 3cl 1 ,
 .Xr ccl 7 ,
