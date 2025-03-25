@@ -89,6 +89,8 @@ struct cccl_Stack
 };
 
 extern int verbose;
+extern int interactive;
+extern int dump;
 
 int cccl_allocfile(const char *path, struct cccl_File *file);
 
@@ -96,6 +98,7 @@ void cccl(struct cccl_File file);
 size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length);
 struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, enum cccl_NodeType type, char value);
 enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth);
+void cccl_dump(void);
 
 const char *strtoken(enum cccl_TokenType type);
 const char *strnode(enum cccl_NodeType type);

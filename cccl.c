@@ -16,4 +16,6 @@ void cccl(struct cccl_File file)
 
     struct cccl_Variables scope = {0};
     cccl_execute(parsed, &scope, 0);
+    if (dump)
+        cccl_dump();
 }

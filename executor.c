@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 static struct cccl_Variables globals = {0};
@@ -31,6 +32,11 @@ static size_t geti(char name)
     return islower(name) ? name - 'a' : name - 'A' + 26;
 }
 
+static char getnamebyi(size_t i)
+{
+    return i < 26 ? i + 'a' : i - 26 + 'A';
+}
+
 static short *get_variable(char name, struct cccl_Variables *scope)
 {
     size_t i = geti(name);
@@ -41,6 +47,21 @@ static short *get_variable(char name, struct cccl_Variables *scope)
     return NULL;
 }
 
+void cccl_dump(void)
+{
+    fputs("Globals:\n", stderr);
+    for (size_t i = 0; i < 52; ++i)
+        if (globals.used[i])
+            fprintf(stderr, "  %c=%d\n", getnamebyi(i), globals.buffer[i]);
+    fputs("Functions:\n", stderr);
+    for (size_t i = 0; i < 52; ++i)
+        if (functions[i].body)
+            fprintf(stderr, "  %c, %lu nodes\n", getnamebyi(i), functions[i].length);
+    fputs("Stack:\n", stderr);
+    for (size_t i = 0; i < stack.length; ++i)
+        fprintf(stderr, "  %d\n", stack.buffer[i]);
+}
+
 enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth)
 {
     if (verbose)
@@ -48,6 +69,22 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             fprintf(stderr, "Executing %s with %d [%c], %lu nodes, depth %lu\n", strnode(code->type), code->value, code->value, code->in_length, depth);
         else
             fprintf(stderr, "Executing %s, %lu nodes, depth %lu\n", strnode(code->type), code->in_length, depth);
+    if (interactive)
+    {
+        char *line = NULL;
+        size_t lsize = 0;
+        ssize_t length = getline(&line, &lsize, stdin);
+        if (length == -1 && ferror(stdin))
+            err(1, "getline()");
+        if (!strcmp(line, "d\n"))
+        {
+            fputs("Locals:\n", stderr);
+            for (size_t i = 0; i < 52; ++i)
+                if (scope->used[i])
+                    fprintf(stderr, "  %c=%d\n", getnamebyi(i), scope->buffer[i]);
+            cccl_dump();
+        }
+    }
     switch (code->type)
     {
     case cccl_Node_CODE:
@@ -266,12 +303,16 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
         enum cccl_ExecutorStatus res;
         if (stack.buffer[stack.length - 1] == *p)
             for (size_t i = 0; i < code->in_length; ++i)
-                switch ((res = cccl_execute(code->in[i], scope, depth + 1)))
-                {
-                case cccl_Executor_ERROR: return res;
-                case cccl_Executor_CONTINUE: return res;
-                case cccl_Executor_END: goto end;
-                }
+                if ((res = cccl_execute(code->in[i], scope, depth + 1)) != 0)
+                    return res;
+    } break;
+    case cccl_Node_END:
+    {
+        return cccl_Executor_END;
+    } break;
+    case cccl_Node_CONTINUE:
+    {
+        return cccl_Executor_CONTINUE;
     } break;
     }
 
