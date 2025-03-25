@@ -1,0 +1,283 @@
+.Dd March 25, 2025
+.Dt CCL 7
+.Os
+.
+.Sh NAME
+.Nm ccl
+.Nd cool char lang
+.
+.Sh DESCRIPTION
+.Nm
+is a brainfuck-inspired language,
+Unlike in brainfuck,
+though,
+.Nm
+manipulates the stack,
+not the array.
+Also,
+each cell in
+.Nm
+is a 16 bit signed integer
+with overflow allowed.
+Stack doesn't have size limitations,
+though ram in your pc is still limited.
+All names in
+.Nm
+are limited to 1 character.
+.
+.Pp
+.Nm
+has variables.
+There're 2 sets of variables:
+global and local ones.
+Local variables
+are different for each
+.Sy procedure .
+.
+.Pp
+As was stated before,
+there are
+procedures.
+Their names are stored
+separately from variables',
+so you can store
+both variable and function
+with the same name.
+Procedures are defined at runtime,
+and it's possible
+to overwrite them.
+.
+.Pp
+There're 3 types of instruction.
+First type is an instruction
+without any argument.
+Its name can be simply
+put in the code.
+Second is an instruction
+with an argument.
+Arguments are mandatory,
+meaning you cannot omit them.
+Though,
+there's special variable
+with the name
+.Ic _ ,
+but not every instruction
+will accept it.
+Third type is a block.
+It's a pair of characters
+that stores some code
+between them.
+Also,
+block accepts an argument
+on the left of left character.
+.
+.Pp
+Instructions
+that work with the stack
+will throw
+an uncatchable error
+if stack is too small.
+.
+.Pp
+Comments are done using
+.Ic /
+character.
+They end on the end of line.
+.
+.Pp
+The instructions are as follows:
+.Bl -tag -width Ds
+.It Ic ^
+Takes no parameters.
+Pushes a new cell on the stack
+with the value 0.
+.
+.It Ic +
+Takes no parameters.
+Increments last cell
+on the stack.
+.
+.It Ic -
+Takes no parameters.
+Decrements last cell
+on the stack.
+.
+.It Ic *
+Takes no parameters.
+Pops last cell
+and then adds its value
+to a new last
+storing the result here.
+.
+.It Ic ~
+Takes no parameters.
+Pops last cell
+and then subtracts its value
+from a new last
+storing the result here.
+.
+.It Ic #
+Takes no parameters.
+If called from a loop,
+exits it
+.Po
+like
+.Ql break
+.Pc .
+If called from a procedure,
+exits it
+.Pc
+like
+.Ql return
+.Pc .
+Otherwise
+.Pq meaning called from outside of anything
+exits the program.
+.
+.It Ic \&:
+Takes no parameters.
+If called from a loop,
+skips current iteration,
+acting like a
+.Ql continue .
+.
+.It Ic %
+Takes a parameter.
+Accepts
+.Ic _ .
+Reverses last n
+variables on the stack,
+where n is a value of
+a provided variable
+or size of the stack if
+.Ic _
+was provided.
+Variable with a given name
+must exist.
+.
+.It Ic =
+Takes a parameter.
+Accepts
+.Ic _ .
+Pops last cell
+and then assigns
+.Pq possibly overriding
+its value
+to a given variable,
+or just pops if
+.Ic _
+was provided.
+.
+.It Ic \&!
+Takes a parameter.
+Doesn't accept
+.Ic _ .
+Deletes variable
+of a given name.
+Prefers local ones first.
+Variable with a given name
+msut exist.
+.
+.It Ic $
+Takes a parameter.
+Doesn't accept
+.Ic _ .
+Pushes given variable's value
+on the stuck.
+Variable with a given name
+must exist.
+.
+.It Ic &
+Takes a parameter.
+Doesn't accept
+.Ic _ .
+Creates a local variable
+with a given name
+assigning 0 to it.
+If variable with a given name
+exists,
+overrides it
+to be 0.
+Note that every operation
+prefers local variables
+first.
+.
+.It Ic <
+Takes a parameter,
+Doesn't accept
+.Ic _ .
+Prints the value
+of a given variable
+as an
+.Xr ascii 7
+character.
+Variable with a given name
+must exist.
+.
+.It Ic >
+Takes a parameter.
+Doesn't accept
+.Ic _ .
+Reads the character
+from the console,
+writing its value
+to a variable.
+Variable with a given name
+must exist.
+.
+.It Ic @
+Takes a parameter.
+Doesn't accept
+.Ic _ .
+Calls a procedure with a given name.
+Procedure with a given name
+must exist.
+.
+.It Ic { }
+Doesn't accept
+.Ic _ .
+Defines a procedure
+with a given name.
+May override.
+.
+.It Ic \&( \&)
+Accepts
+.Ic _ .
+Enters a condtional loop.
+Continues working
+until given variable
+is less then or equal to 0.
+Variable with a given name
+must exist.
+If a parameter is
+.Ic _ ,
+then acts as infinite loop.
+.
+.It Ic \&[ \&]
+Repeats its body n times
+where n is a value of
+a variable with a given name.
+Variable with a given name
+must exist.
+.
+.It Ic \&? \&;
+Executes its body
+if a variable with a given name
+is equal to the last cell
+on the stack.
+Variable with a given name
+must exist.
+.El
+.
+.Sh SEE ALSO
+.Xr ascii 7 ,
+.Xr 3cl 1 ,
+.Lk https://github.com/holy-8/cool_char_lang Original implementation
+.
+.Sh AUTHORS
+Original implementation is written by
+.Lk https://github.com/holy-8 holy8 ,
+slightly patched and rewritten in
+.Xr mdoc 7
+by
+.An Nakidai Perumenei Aq Mt nakidai@disroot.org
