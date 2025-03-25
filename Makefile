@@ -7,7 +7,9 @@ OBJS += str.o
 OBJS += tokenizer.o
 
 RM ?= rm -f
-DESTDIR ?= /usr/local
+PREFIX ?= /usr/local
+BINDIR ?= ${PREFIX}/bin
+MANDIR ?= ${PREFIX}/man
 
 
 all: 3cl
@@ -18,16 +20,15 @@ ${OBJS}: cccl.h
 	${CC} ${LDFLAGS} -o 3cl ${OBJS} ${LDLIBS}
 
 install: all
-	install -d ${DESTDIR}/bin ${DESTDIR}/share/man/man1
-	install -d ${DESTDIR}/bin ${DESTDIR}/share/man/man7
-	install -m755 3cl ${DESTDIR}/bin
-	install -m644 3cl.1 ${DESTDIR}/share/man/man1
-	install -m644 ccl.7 ${DESTDIR}/share/man/man7
+	install -d ${BINDIR} ${MANDIR}/man1
+	install -m755 3cl ${BINDIR}
+	install -m644 3cl.1 ${MANDIR}/man1
+	install -m644 ccl.7 ${MANDIR}/man7
 
 uninstall:
-	${RM} ${DESTDIR}/bin/3cl
-	${RM} ${DESTDIR}/share/man/man1/3cl.1
-	${RM} ${DESTDIR}/share/man/man7/ccl.7
+	${RM} ${BINDIR}/3cl
+	${RM} ${MANDIR}/man1/3cl.1
+	${RM} ${MANDIR}/man7/ccl.7
 
 clean:
 	${RM} ${OBJS} 3cl
