@@ -14,6 +14,6 @@ void cccl(struct cccl_File file)
 
     struct cccl_Node *parsed = cccl_parse(tokens, tokens_amount, 0, 0);
 
-    struct cccl_Variables scope;
-    cccl_execute(parsed, &scope);
+    struct cccl_Variables scope = {0};
+    cccl_execute(parsed, &scope, 0);
 }

@@ -65,7 +65,7 @@ enum cccl_ExecutorStatus
 {
     cccl_Executr_OK = 0,
     cccl_Executor_ERROR,
-    cccl_EXECUTOR_CONTINUE,
+    cccl_Executor_CONTINUE,
     cccl_Executor_END,
 };
 
@@ -95,6 +95,10 @@ int cccl_allocfile(const char *path, struct cccl_File *file);
 void cccl(struct cccl_File file);
 size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length);
 struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, enum cccl_NodeType type, char value);
-enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope);
+enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth);
+
+const char *strtoken(enum cccl_TokenType type);
+const char *strnode(enum cccl_NodeType type);
+const char *strstatus(enum cccl_ExecutorStatus status);
 
 #endif /* __CCCL_H__ */

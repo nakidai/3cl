@@ -41,19 +41,25 @@ static short *get_variable(char name, struct cccl_Variables *scope)
     return NULL;
 }
 
-enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope)
+enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth)
 {
+    if (verbose)
+        if (code->value)
+            fprintf(stderr, "Executing %s with %d [%c], %lu nodes, depth %lu\n", strnode(code->type), code->value, code->value, code->in_length, depth);
+        else
+            fprintf(stderr, "Executing %s, %lu nodes, depth %lu\n", strnode(code->type), code->in_length, depth);
     switch (code->type)
     {
     case cccl_Node_CODE:
     {
-        int res;
+        enum cccl_ExecutorStatus res;
         for (size_t i = 0; i < code->in_length; ++i)
-            if ((res = cccl_execute(code->in[i], scope)) != 0)
-                goto code_end;
-code_end:
-        if (res == cccl_Executor_ERROR)
-            return res;
+            switch ((res = cccl_execute(code->in[i], scope, depth + 1)))
+            {
+            case cccl_Executor_ERROR: return res;
+            case cccl_Executor_CONTINUE: return cccl_Executor_ERROR;
+            case cccl_Executor_END: goto end;
+            }
     } break;
     case cccl_Node_PUSHZERO:
     {
@@ -197,56 +203,78 @@ code_end:
 
         size_t i = geti(code->value);
         struct cccl_Variables localscope = {0};
-        int res;
+        enum cccl_ExecutorStatus res;
         for (size_t j = 0; j < functions[i].length; ++j)
-            if ((res = cccl_execute(functions[i].body[j], &localscope)) != 0)
-                goto call_end;
-call_end:
-        if (res == cccl_Executor_ERROR)
-            return res;
+            switch ((res = cccl_execute(functions[i].body[j], &localscope, depth + 1)))
+            {
+            case cccl_Executor_ERROR: return res;
+            case cccl_Executor_CONTINUE: return cccl_Executor_ERROR;
+            case cccl_Executor_END: goto end;
+            }
     } break;
     case cccl_Node_INFINITE:
     {
-        int res;
+        short *p;
         if (code->value == '_')
-            for (;;)
-                for (size_t i = 0; i < code->in_length; ++i)
-                    if ((res = cccl_execute(code->in[i], scope)) != 0)
-                        goto infinite_end;
+        {
+            short n = 1;
+            p = &n;
+        } else
+        {
+            short *p = get_variable(code->value, scope);
+            if (!p)
+                errx(1, "Cannot loop over non-existent variable %c", code->value);
+        }
 
-        short *p = get_variable(code->value, scope);
-        if (!p)
-            errx(1, "Cannot loop using non-existent variable %c", code->value);
-
+        enum cccl_ExecutorStatus res;
         while (*p > 0)
             for (size_t i = 0; i < code->in_length; ++i)
-                if ((res = cccl_execute(code->in[i], scope)) != 0)
-                    goto infinite_end;
-infinite_end:
-        if (res == cccl_Executor_ERROR)
-            return res;
+                switch ((res = cccl_execute(code->in[i], scope, depth + 1)))
+                {
+                case cccl_Executor_ERROR: return res;
+                case cccl_Executor_CONTINUE: break;
+                case cccl_Executor_END: goto end;
+                }
     } break;
     case cccl_Node_REPEAT:
     {
         short *p = get_variable(code->value, scope);
         if (!p)
-            errx(1, "Cannot loop using non-existent variable %c", code->value);
+            errx(1, "Cannot loop over non-existent variable %c", code->value);
         else if (*p < 0)
             errx(1, "Cannot iterate %c=%d times", code->value, *p);
 
-        int res;
+        enum cccl_ExecutorStatus res;
         for (size_t i = 0; i < *p; ++i)
             for (size_t j = 0; j < code->in_length; ++j)
-                if ((res = cccl_execute(code->in[j], scope)) != 0)
-                    goto repeat_end;
-repeat_end:
-        if (res == cccl_Executor_ERROR)
-            return res;
+                switch ((res = cccl_execute(code->in[j], scope, depth + 1)))
+                {
+                case cccl_Executor_ERROR: return res;
+                case cccl_Executor_CONTINUE: break;
+                case cccl_Executor_END: goto end;
+                }
     };
     case cccl_Node_CONDITIONAL:
     {
+        assert(stack.length >= 1);
+        short *p = get_variable(code->value, scope);
+        if (code->value == '_')
+            errx(1, "_ is not allowed with '%c'", '?');
+        if (!p)
+            errx(1, "Cannot check non-existent variable %c", code->value);
+
+        enum cccl_ExecutorStatus res;
+        if (stack.buffer[stack.length - 1] == *p)
+            for (size_t i = 0; i < code->in_length; ++i)
+                switch ((res = cccl_execute(code->in[i], scope, depth + 1)))
+                {
+                case cccl_Executor_ERROR: return res;
+                case cccl_Executor_CONTINUE: return res;
+                case cccl_Executor_END: goto end;
+                }
     } break;
     }
 
+end:
     return 0;
 }

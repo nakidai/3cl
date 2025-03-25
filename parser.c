@@ -55,7 +55,7 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
     for (size_t i = 0; i < tokens_length; ++i)
     {
         if (verbose)
-            fprintf(stderr, "T:[%c:%d] ", tokens[i].value, tokens[i].type);
+            fprintf(stderr, "T:[%c:%s] ", tokens[i].value, strtoken(tokens[i].type));
         switch (tokens[i].type)
         {
         case cccl_Token_COMMAND: case cccl_Token_COMMANDWITHARG: case cccl_Token_BLOCKSTART:
@@ -123,8 +123,8 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
             errx(1, "No matching bracket for %c", opening);
 
 end:
-            putchar('\n');
-            puts("Exploring inner...");
+            if (verbose)
+                fputs("\nExploring inner...\n", stderr);
             res->in[res->in_length - 1] = cccl_parse(
                 tokens + oldi + 1,
                 i - oldi - 1,
