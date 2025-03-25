@@ -15,6 +15,12 @@ int dump = 0;
 int main(int argc, char **argv)
 {
     const char *name = *argv;
+    int error;
+#ifdef __OpenBSD__
+    error = pledge("stdio rpath", NULL);
+    if (error)
+        err(1, "pledge()");
+#endif /* __OpenBSD__ */
 
     int ch;
     while ((ch = getopt(argc, argv, "vid")) >= 0)
@@ -51,13 +57,20 @@ int main(int argc, char **argv)
 
     struct cccl_File file;
 
-    int error = cccl_allocfile(*argv, &file);
+    error = cccl_allocfile(*argv, &file);
     if (error)
         err(1, "cccl_readfile()");
 
     FILE *f = fopen(*argv, "r");
     if (!f)
         err(1, "fopen()");
+
+#ifdef __OpenBSD__
+    error = pledge("stdio", NULL);
+    if (error)
+        err(1, "pledge()");
+#endif /* __OpenBSD__ */
+
     int bytes_read = fread(file.buffer, 1, file.size, f);
     if (ferror(f) || bytes_read != file.size)
         errx(1, "couldn't read %s", *argv);
