@@ -1,0 +1,25 @@
+/ Euclid gcd
+/ Last 2 numbers on the stack are arguments
+/ Result is passed through the stack too
+F {
+    / Parse arguments into variables
+    &a=a
+    &b=b
+
+    / If a == b then exit with it
+    $ab?#;
+
+    b[-] &c=c   / a - b
+    &f^+=f c (  / if a - b > 0 (or a > b)
+        $c $b
+    ^=f#) f (   / else
+        $b a[-] $a
+    #)
+
+    / Call ourselves but
+    / with simpler case
+    @F
+}
+
+/ gcd(4, 5)
+^++++ ^+++++ @F

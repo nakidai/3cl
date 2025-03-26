@@ -1,0 +1,20 @@
+/ Takes an index in the fibonacci sequence on the stack
+/ Returns a number of the fibonacci sequence with a given index
+F {
+    / Let us define some local variables
+    &a &b &c
+
+    / If index is zero or one then we just return the number
+    ?c #; $c+ = c
+    ?c #;
+
+    / Otherwise we get previous two numbers of the sequence
+    / and return their sum
+    = c $c $c
+    - @F = a
+    -- @F = b
+    $a $b*
+}
+
+^+++++++++++++++++++++++=t$t
+$t@F
