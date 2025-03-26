@@ -281,8 +281,9 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
         else if (*p < 0)
             errx(1, "Cannot iterate %c=%d times", code->value, *p);
 
+        short n = *p;
         enum cccl_ExecutorStatus res;
-        for (size_t i = 0; i < *p; ++i)
+        for (size_t i = 0; i < n; ++i)
             for (size_t j = 0; j < code->in_length; ++j)
                 switch ((res = cccl_execute(code->in[j], scope, depth + 1)))
                 {
