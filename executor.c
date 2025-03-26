@@ -291,7 +291,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
                 case cccl_Executor_CONTINUE: break;
                 case cccl_Executor_END: goto end;
                 }
-    };
+    } break;
     case cccl_Node_CONDITIONAL:
     {
         assert(stack.length >= 1);
