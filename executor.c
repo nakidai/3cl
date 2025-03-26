@@ -258,7 +258,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             p = &n;
         } else
         {
-            short *p = get_variable(code->value, scope);
+            p = get_variable(code->value, scope);
             if (!p)
                 errx(1, "Cannot loop over non-existent variable %c", code->value);
         }
