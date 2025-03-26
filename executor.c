@@ -220,7 +220,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             errx(1, "Cannot save input in a non-existent variable %c", code->value);
 
         int c = getchar();
-        if (c < 0)
+        if (c < 0 && ferror(stdin))
             err(1, "getchar()");
 
         *p = c;
