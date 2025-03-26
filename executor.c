@@ -47,19 +47,19 @@ static short *get_variable(char name, struct cccl_Variables *scope)
     return NULL;
 }
 
-void cccl_dump(void)
+void cccl_dump(FILE *f)
 {
-    fputs("Globals:\n", stderr);
+    fputs("Globals:\n", f);
     for (size_t i = 0; i < 52; ++i)
         if (globals.used[i])
-            fprintf(stderr, "  %c=%d\n", getnamebyi(i), globals.buffer[i]);
-    fputs("Functions:\n", stderr);
+            fprintf(f, "  %c=%d\n", getnamebyi(i), globals.buffer[i]);
+    fputs("Functions:\n", f);
     for (size_t i = 0; i < 52; ++i)
         if (functions[i].body)
-            fprintf(stderr, "  %c, %lu nodes\n", getnamebyi(i), functions[i].length);
-    fputs("Stack:\n", stderr);
+            fprintf(f, "  %c, %lu nodes\n", getnamebyi(i), functions[i].length);
+    fputs("Stack:\n", f);
     for (size_t i = 0; i < stack.length; ++i)
-        fprintf(stderr, "  %d\n", stack.buffer[i]);
+        fprintf(f, "  %d\n", stack.buffer[i]);
 }
 
 enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth)
@@ -82,7 +82,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             for (size_t i = 0; i < 52; ++i)
                 if (scope->used[i])
                     fprintf(stderr, "  %c=%d\n", getnamebyi(i), scope->buffer[i]);
-            cccl_dump();
+            cccl_dump(stderr);
         }
     }
     switch (code->type)

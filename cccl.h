@@ -2,6 +2,7 @@
 #define __CCCL_H__
 
 #include <stddef.h>
+#include <stdio.h>
 
 
 #define TOKENS_LIMIT 16384
@@ -98,7 +99,7 @@ void cccl(struct cccl_File file);
 size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length);
 struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, enum cccl_NodeType type, char value);
 enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth);
-void cccl_dump(void);
+void cccl_dump(FILE *f);
 
 const char *strtoken(enum cccl_TokenType type);
 const char *strnode(enum cccl_NodeType type);
