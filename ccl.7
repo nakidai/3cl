@@ -79,10 +79,21 @@ an uncatchable error
 if stack is too small.
 .
 .Pp
-Comments are done using
+They're 2 types of comments in
+.Nm .
+The first is a one line one:
+It starts with a
 .Ic /
-character.
-They end on the end of line.
+character,
+and ends with a newline.
+The second is the multiline comment:
+Text inside
+.Ic \e
+characters is not parsed.
+These comments can't overlap,
+and you can safely put
+characters meaning one comment type
+into another.
 .
 .Pp
 The instructions are as follows:

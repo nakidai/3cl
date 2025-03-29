@@ -9,7 +9,7 @@
 size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length)
 {
     size_t i = 0, tokeni = 0;
-    int comment = 0;
+    int comment = 0, mlcomment = 0;
 
     do
     {
@@ -17,7 +17,7 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
         {
 #define X(name)                                 \
     {                                           \
-        if (comment)                            \
+        if (comment || mlcomment)               \
             break;                              \
         tokens[tokeni++] = (struct cccl_Token)  \
         {                                       \
@@ -27,11 +27,21 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
     } break
         case '/':
         {
+            if (mlcomment)
+                break;
             comment = 1;
         } break;
         case '\n':
         {
+            if (mlcomment)
+                break;
             comment = 0;
+        } break;
+        case '\\':
+        {
+            if (comment)
+                break;
+            mlcomment = !mlcomment;
         } break;
         case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': 
         case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
@@ -54,7 +64,7 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
         { } break;
         default:
         {
-            if (comment)
+            if (comment || mlcomment)
                 break;
             errx(1, "Illegal symbol in a code at byte %lu: [%d] %c", i, code[i], code[i]);
         } break;
