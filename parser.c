@@ -76,22 +76,21 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
         {
         case cccl_Token_COMMAND:
         {
-            res->in[res->in_length - 1] = malloc(sizeof(struct cccl_Node));
-            *res->in[res->in_length - 1] = (struct cccl_Node)
-            {
-                .type = get_nodetype(tokens[i].value),
-            };
+            res->in[res->in_length - 1] = cccl_parse(
+                NULL, 0,
+                get_nodetype(tokens[i].value),
+                0
+            );
         } break;
         case cccl_Token_COMMANDWITHARG:
         {
             assert(i + 1 != tokens_length);
             assert(tokens[i + 1].type == cccl_Token_IDENTIFIER);
-            res->in[res->in_length - 1] = malloc(sizeof(struct cccl_Node));
-            *res->in[res->in_length - 1] = (struct cccl_Node)
-            {
-                .type = get_nodetype(tokens[i].value),
-                .value = tokens[i + 1].value,
-            };
+            res->in[res->in_length - 1] = cccl_parse(
+                NULL, 0,
+                get_nodetype(tokens[i].value),
+                tokens[i + 1].value
+            );
         } break;
         case cccl_Token_BLOCKSTART:
         {
