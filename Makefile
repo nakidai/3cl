@@ -19,6 +19,9 @@ ${OBJS}: cccl.h
 3cl: ${OBJS}
 	${CC} ${LDFLAGS} -o 3cl ${OBJS} ${LDLIBS}
 
+test: all
+	make -C examples
+
 install: all
 	install -d ${BINDIR} ${MANDIR}/man1
 	install -m755 3cl ${BINDIR}
