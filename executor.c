@@ -251,10 +251,9 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
     } break;
     case cccl_Node_INFINITE:
     {
-        short *p;
+        short n = 1, *p;
         if (code->value == '_')
         {
-            short n = 1;
             p = &n;
         } else
         {
