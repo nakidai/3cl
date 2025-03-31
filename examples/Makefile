@@ -6,4 +6,4 @@ all: ${TESTS}
 .PHONY: ${TESTS}
 ${TESTS}:
 	@echo "Test: $@"
-	@test "`../3cl -d $@.ccl`" = "`cat $@.ccl.test`"
+	@test "`../3cl -d $@.ccl < in/$@`" = "`cat out/$@`"
