@@ -120,11 +120,13 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
     } break;
     case cccl_Node_ADD:
     {
+        assert(stack.length >= 2);
         --stack.length;
         stack.buffer[stack.length - 1] += stack.buffer[stack.length];
     } break;
     case cccl_Node_SUBTRACT:
     {
+        assert(stack.length >= 2);
         --stack.length;
         stack.buffer[stack.length - 1] -= stack.buffer[stack.length];
     } break;
