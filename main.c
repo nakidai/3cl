@@ -12,6 +12,12 @@ int verbose = 0;
 int interactive = 0;
 int dump = 0;
 
+static void usage(const char *name)
+{
+    fprintf(stderr, "usage: %s [-vid] file\n", name);
+    exit(1);
+}
+
 int main(int argc, char **argv)
 {
     const char *name = *argv;
@@ -41,8 +47,7 @@ int main(int argc, char **argv)
             } break;
             default:
             {
-                fprintf(stderr, "usage: %s [-vid] file\n", name);
-                exit(1);
+                usage(name);
             } break;
         }
     }
@@ -50,10 +55,7 @@ int main(int argc, char **argv)
     argv += optind;
 
     if (!*argv)
-    {
-        fprintf(stderr, "usage: %s [-vid] file\n", name);
-        exit(1);
-    }
+        usage(name);
 
     struct cccl_File file;
 
