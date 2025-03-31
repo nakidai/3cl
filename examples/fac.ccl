@@ -1,0 +1,33 @@
+^=z / z = 0
+F/actorial / n -- nth-factorial
+{
+    z?+#; / n == 0 ? return 1
+
+    =a$a$a / dup n
+    - @F=a / a = F(n - 1)
+
+    =b / b = n
+
+    / push a * b
+    b[$a]
+    $b-=b
+    b[*]
+}
+
+I/terative factorial / n -- nth-fctorial
+{
+    z?+#;   / n == 0 ? return 1
+
+    =c$c    / c = n - 1
+    $c-=c   / --c
+
+    c (                     / while c > 0
+        $c                  /   push c
+        =a=ba[$b]$a-=aa[*]  /   multiply 2 toppest nums
+        $c-=c               /   --c
+    )
+}
+
+^++++++
+^++++++ @F
+^++++++ @I

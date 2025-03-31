@@ -1,0 +1,12 @@
+Globals:
+  a=0
+  b=720
+  c=0
+  z=0
+Functions:
+  F, 13 nodes
+  I, 7 nodes
+Stack:
+  6
+  720
+  720

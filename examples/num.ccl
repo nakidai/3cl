@@ -1,0 +1,39 @@
+^+++++ +++++ = t/en
+$t- = n/ine
+^- = E/OF
+^ = e/rror state
+^+++++++++++++++++++++++++++++++++++++++++++++++ = z/ero character - 1
+$z+++++ +++++ + = T/ '0' - 1 + 11
+^ = Z / actual zero
+
+P/arse a number from stdin / -- input
+{
+    &r / our result :D
+
+    _ (
+        &c>c / read into local
+        $cE?=_^+=e#; / if EOF then exit setting error
+
+        &s$z~=s/ubtract / put char - ('0' - 1) into s
+
+        &f^=f s( / if s >= 0 then our char is '0' or above
+                  / meaning it's possibly a digit
+
+            ^$c$T~~=s/ubtract / put -(char - ('0' - 1 + 11)) into s
+            &f^=f s( / if s >= 0 then our char is '9' or below
+                      / meaning it's a digit
+
+                / c is a digit here
+                $c$z~- / convert character into number
+                t[$r]n[*] / shift result one decimal digit left
+                *=r / finally append character
+
+            ^+=f#)
+            $fZ?=_#;=_
+        ^+=f#)
+        $fZ?=_^+=e#;=_ / otherwise exit setting error
+    )
+    $r
+}
+
+@P
