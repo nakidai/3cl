@@ -1,6 +1,7 @@
 TESTS += fac
 TESTS += fib
 TESTS += gcd
+TESTS += mlc
 TESTS += num
 
 all: ${TESTS}
