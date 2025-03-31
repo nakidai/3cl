@@ -64,7 +64,7 @@ struct cccl_Node
 
 enum cccl_ExecutorStatus
 {
-    cccl_Executr_OK = 0,
+    cccl_Executor_OK = 0,
     cccl_Executor_ERROR,
     cccl_Executor_CONTINUE,
     cccl_Executor_END,

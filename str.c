@@ -48,7 +48,7 @@ const char *strstatus(enum cccl_ExecutorStatus status)
 {
     switch (status)
     {
-    break; case cccl_Executr_OK: return "OK";
+    break; case cccl_Executor_OK: return "OK";
     break; case cccl_Executor_ERROR: return "ERROR";
     break; case cccl_Executor_CONTINUE: return "CONTINUE";
     break; case cccl_Executor_END: return "END";
