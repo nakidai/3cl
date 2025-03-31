@@ -13,6 +13,12 @@ static struct cccl_Variables globals = {0};
 static struct cccl_Function functions[52] = {0};
 static struct cccl_Stack stack = {0};
 
+static struct
+{
+    char *buf;
+    size_t length;
+} line = {0};
+
 static void expand_stack(void)
 {
     if (!stack.buffer)
@@ -71,12 +77,10 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             fprintf(stderr, "Executing %s, %lu nodes, depth %lu\n", strnode(code->type), code->in_length, depth);
     if (interactive)
     {
-        char *line = NULL;
-        size_t lsize = 0;
-        ssize_t length = getline(&line, &lsize, stdin);
+        ssize_t length = getline(&line.buf, &line.length, stdin);
         if (length == -1 && ferror(stdin))
             err(1, "getline()");
-        if (!strcmp(line, "d\n"))
+        if (!strcmp(line.buf, "d\n"))
         {
             fputs("Locals:\n", stderr);
             for (size_t i = 0; i < 52; ++i)
