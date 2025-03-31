@@ -6,10 +6,17 @@
 #include <stddef.h>
 
 
+enum CodeStatus
+{
+    Code_CODE = 0,
+    Code_SINGLELINE_COMMENT,
+    Code_MULTILINE_COMMENT,
+};
+
 size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], size_t tokens_length)
 {
     size_t i = 0, tokeni = 0;
-    int comment = 0, mlcomment = 0;
+    enum CodeStatus status = Code_CODE;
 
     do
     {
@@ -17,7 +24,7 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
         {
 #define X(name)                                 \
     {                                           \
-        if (comment || mlcomment)               \
+        if (status != Code_CODE)                \
             break;                              \
         tokens[tokeni++] = (struct cccl_Token)  \
         {                                       \
@@ -27,21 +34,23 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
     } break
         case '/':
         {
-            if (mlcomment)
+            if (status == Code_MULTILINE_COMMENT)
                 break;
-            comment = 1;
+            status = Code_SINGLELINE_COMMENT;
         } break;
         case '\n':
         {
-            if (mlcomment)
+            if (status == Code_MULTILINE_COMMENT)
                 break;
-            comment = 0;
+            status = Code_CODE;
         } break;
         case '\\':
         {
-            if (comment)
+            if (status == Code_SINGLELINE_COMMENT)
                 break;
-            mlcomment = !mlcomment;
+            status = status == Code_MULTILINE_COMMENT
+                ? Code_CODE
+                : Code_MULTILINE_COMMENT;
         } break;
         case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': 
         case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
@@ -64,13 +73,14 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
         { } break;
         default:
         {
-            if (comment || mlcomment)
+            if (status != Code_CODE)
                 break;
             errx(1, "Illegal symbol in a code at byte %lu: [%d] %c", i, code[i], code[i]);
         } break;
 #undef X
         }
-        assert(tokeni < tokens_length);
+        if (tokeni >= tokens_length)
+            errx(1, "Exceeded limit of %lu tokens", tokens_length);
     } while(++i < size);
 
     return tokeni;
