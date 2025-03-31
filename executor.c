@@ -72,9 +72,9 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
 {
     if (verbose)
         if (code->value)
-            fprintf(stderr, "Executing %s with %d [%c], %lu nodes, depth %lu\n", strnode(code->type), code->value, code->value, code->in_length, depth);
+            fprintf(stderr, "Executing %s with %d [%c], %lu nodes, depth %lu\n", cccl_strnode(code->type), code->value, code->value, code->in_length, depth);
         else
-            fprintf(stderr, "Executing %s, %lu nodes, depth %lu\n", strnode(code->type), code->in_length, depth);
+            fprintf(stderr, "Executing %s, %lu nodes, depth %lu\n", cccl_strnode(code->type), code->in_length, depth);
     if (interactive)
     {
         ssize_t length = getline(&line.buf, &line.length, stdin);

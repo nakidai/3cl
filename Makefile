@@ -1,8 +1,8 @@
+OBJS += allocfile.o
 OBJS += cccl.o
 OBJS += executor.o
 OBJS += main.o
 OBJS += parser.o
-OBJS += readfile.o
 OBJS += str.o
 OBJS += tokenizer.o
 

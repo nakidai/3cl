@@ -101,8 +101,8 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
 enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variables *scope, size_t depth);
 void cccl_dump(FILE *f);
 
-const char *strtoken(enum cccl_TokenType type);
-const char *strnode(enum cccl_NodeType type);
-const char *strstatus(enum cccl_ExecutorStatus status);
+const char *cccl_strtoken(enum cccl_TokenType type);
+const char *cccl_strnode(enum cccl_NodeType type);
+const char *cccl_strstatus(enum cccl_ExecutorStatus status);
 
 #endif /* __CCCL_H__ */

@@ -3,7 +3,7 @@
 #include <stddef.h>
 
 
-const char *strtoken(enum cccl_TokenType type)
+const char *cccl_strtoken(enum cccl_TokenType type)
 {
     switch (type)
     {
@@ -16,7 +16,7 @@ const char *strtoken(enum cccl_TokenType type)
     return NULL;
 }
 
-const char *strnode(enum cccl_NodeType type)
+const char *cccl_strnode(enum cccl_NodeType type)
 {
     switch (type)
     {
@@ -44,7 +44,7 @@ const char *strnode(enum cccl_NodeType type)
     return NULL;
 }
 
-const char *strstatus(enum cccl_ExecutorStatus status)
+const char *cccl_strstatus(enum cccl_ExecutorStatus status)
 {
     switch (status)
     {

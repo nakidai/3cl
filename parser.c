@@ -55,7 +55,7 @@ struct cccl_Node *cccl_parse(struct cccl_Token tokens[], size_t tokens_length, e
     for (size_t i = 0; i < tokens_length; ++i)
     {
         if (verbose)
-            fprintf(stderr, "T:[%c:%s] ", tokens[i].value, strtoken(tokens[i].type));
+            fprintf(stderr, "T:[%c:%s] ", tokens[i].value, cccl_strtoken(tokens[i].type));
         switch (tokens[i].type)
         {
         case cccl_Token_COMMAND: case cccl_Token_COMMANDWITHARG: case cccl_Token_BLOCKSTART:
