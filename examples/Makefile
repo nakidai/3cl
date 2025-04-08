@@ -1,3 +1,4 @@
+TESTS += cnt
 TESTS += fac
 TESTS += fib
 TESTS += gcd

@@ -1,0 +1,30 @@
+^++=t/wo
+
+c/ount elements on the stack but more complicated / end [... elem] start -- end [... elem] count
+{
+    + / increment counter
+    %t / get last elem
+    E? / if it's end then stop counting
+        %t / reverse back
+        #
+    ;
+
+    &e=e / pop elem saving
+    @c   / end [...] start+1
+    $e%t / reverse back
+}
+
+C/ount elements on the stack / [elem ...] -- [elem ...] elem-count
+{
+    $E / push end on the stack
+    %_ / reverse the stack
+    ^- @c / count elements
+    &c=c / save count
+    %_ / reverse back
+    =_ / get rid of end
+    $c / push count back
+}
+
+^-=E / end of count
+^^^^^
+@C
