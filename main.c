@@ -30,27 +30,25 @@ int main(int argc, char **argv)
 
     int ch;
     while ((ch = getopt(argc, argv, "vid")) >= 0)
-    {
         switch (ch)
         {
-            case 'v':
-            {
-                verbose = 1;
-            } break;
-            case 'i':
-            {
-                interactive = 1;
-            } break;
-            case 'd':
-            {
-                dump = 1;
-            } break;
-            default:
-            {
-                usage(name);
-            } break;
+        case 'v':
+        {
+            verbose = 1;
+        } break;
+        case 'i':
+        {
+            interactive = 1;
+        } break;
+        case 'd':
+        {
+            dump = 1;
+        } break;
+        default:
+        {
+            usage(name);
+        } break;
         }
-    }
     argc -= optind;
     argv += optind;
 
