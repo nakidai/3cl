@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 #endif /* __OpenBSD__ */
 
     int bytes_read = fread(file.buffer, 1, file.size, f);
-    if (ferror(f) || bytes_read != file.size)
+    if (ferror(f) || bytes_read != file.size || !bytes_read)
         errx(1, "couldn't read %s", *argv);
     fclose(f);
 
