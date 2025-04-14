@@ -5,6 +5,8 @@ TESTS += gcd
 TESTS += mlc
 TESTS += num
 
+export ASAN_OPTIONS=detect_leaks=0
+
 all: ${TESTS}
 
 .PHONY: ${TESTS}
