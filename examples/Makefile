@@ -1,3 +1,4 @@
+TESTS += cat
 TESTS += cnt
 TESTS += fac
 TESTS += fib

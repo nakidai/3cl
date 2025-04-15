@@ -1,0 +1,7 @@
+^=c / create variable for storing input
+^- / push -1 (EOF) on the stack
+_ (
+    >c   / input
+    c?#; / if c is -1 then exit
+    <c   / output
+)
