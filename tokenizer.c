@@ -18,6 +18,9 @@ size_t cccl_tokenize(const char *code, size_t size, struct cccl_Token tokens[], 
     size_t i = 0, tokeni = 0;
     enum CodeStatus status = Code_CODE;
 
+    if (!code || !size)
+        return 0;
+
     do
     {
         switch (code[i])
