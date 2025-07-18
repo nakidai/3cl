@@ -99,7 +99,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             {
             case cccl_Executor_ERROR: return res;
             case cccl_Executor_CONTINUE: return cccl_Executor_ERROR;
-            case cccl_Executor_END: goto end;
+            case cccl_Executor_END: return cccl_Executor_OK;
             }
     } break;
     case cccl_Node_PUSHZERO:
@@ -252,7 +252,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
             {
             case cccl_Executor_ERROR: return res;
             case cccl_Executor_CONTINUE: return cccl_Executor_ERROR;
-            case cccl_Executor_END: goto end;
+            case cccl_Executor_END: return cccl_Executor_OK;
             }
     } break;
     case cccl_Node_INFINITE:
@@ -275,7 +275,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
                 {
                 case cccl_Executor_ERROR: return res;
                 case cccl_Executor_CONTINUE: break;
-                case cccl_Executor_END: goto end;
+                case cccl_Executor_END: return cccl_Executor_OK;
                 }
     } break;
     case cccl_Node_REPEAT:
@@ -294,7 +294,7 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
                 {
                 case cccl_Executor_ERROR: return res;
                 case cccl_Executor_CONTINUE: break;
-                case cccl_Executor_END: goto end;
+                case cccl_Executor_END: return cccl_Executor_OK;
                 }
     } break;
     case cccl_Node_CONDITIONAL:
@@ -322,6 +322,5 @@ enum cccl_ExecutorStatus cccl_execute(struct cccl_Node *code, struct cccl_Variab
     } break;
     }
 
-end:
-    return 0;
+    return cccl_Executor_OK;
 }
